@@ -10,4 +10,10 @@ class Player {
     this.lives = 3;
     this.crouch = false; // cambiar width y height
   }
+  draw() {
+    ctx.beginPath();
+    ctx.rect(20, 20, 150, 100);
+    ctx.stroke();
+    context.closePath();
+  }
 }
