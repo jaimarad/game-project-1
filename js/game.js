@@ -1,4 +1,4 @@
-const Game = {
+const game = {
   canvas: undefined,
   ctx: undefined,
   width: undefined,
@@ -15,42 +15,65 @@ const Game = {
 
   init() {
     this.canvas = document.getElementById("canvas");
-    this.ctx = this.canvas.getContest("2d");
+    this.ctx = this.canvas.getContext("2d");
     this.setDimensions();
     this.start();
   },
 
   setDimensions() {
-    this.height = window.innerHeight;
-    this.width = windows.innerWidth;
+    this.height = window.innerHeight - 5;
+    this.width = window.innerWidth - 5;
     this.canvas.height = this.height;
     this.canvas.width = this.width;
   },
 
   reset() {
-    this.background = new Background();
-    this.player = new Player();
+    this.background = new Background(this.ctx, this.width, this.height, 0);
+    this.player = new Player(this.ctx, this.height, this.width);
+    this.player.setListeners();
     this.obstacles = [];
   },
 
   start() {
     this.reset();
+    this.interval = setInterval(
+      () => {
+        this.frameCounter > 5000
+          ? (this.frameCounter = 0)
+          : this.frameCounter++;
+        this.clear();
+        this.drawAll();
 
-    this.interval = setInterval(refreshScreen, 1000 / this.FPS);
-  },
+        this.generateObstacles();
+        this.clearObstacles();
 
-  refeshScreen() {
-    this.clear();
-    this.drawAll();
+        if (this.player.keys.keyLeftPressed) this.player.moveLeft();
+        if (this.player.keys.keyRightPressed) this.player.moveRight();
+
+        this.player.move();
+      },
+
+      1000 / this.FPS
+    );
   },
 
   drawAll() {
-    this.player.draw();
     this.background.draw();
-    this.obstacles.forEach((obstacle) => obstacle.draw());
+    this.player.draw();
+    this.obstacles.forEach((el) => el.draw());
   },
 
   clear() {
-    this.ctx.context.clearRect(0, 0, this.width, this.height);
+    this.ctx.clearRect(0, 0, this.width, this.height);
+  },
+
+  generateObstacles() {
+    if (this.frameCounter % 90 === 0) {
+      this.obstacles.push(new Obstacles(this.ctx, this.width, this.height, 0)); //Aquí llamamos a la clase obstacle.js
+    }
+  },
+
+  clearObstacles() {
+    this.obstacles = this.obstacles.filter((obs) => obs.x >= -obs.w); //Esta x y w son de la clase obstacle.js
   },
 };
