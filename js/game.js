@@ -9,7 +9,7 @@ const game = {
   background: undefined,
   player: undefined,
   obstacles: [],
-  target: [],
+  targets: [],
 
   interval: undefined,
 
@@ -32,7 +32,7 @@ const game = {
     this.player = new Player(this.ctx, this.height, this.width);
     this.player.setListeners();
     this.obstacles = [];
-    this.target = [];
+    this.targets = [];
   },
 
   start() {
@@ -47,13 +47,39 @@ const game = {
 
         this.generateObstacles();
         this.clearObstacles();
+
         this.removeBullets();
         this.generateTarget();
 
         if (this.player.keys.keyLeftPressed) this.player.moveLeft();
         if (this.player.keys.keyRightPressed) this.player.moveRight();
 
-        this.player.move();
+        // this.player.move(); !!!!!!!!!!!!!!!!!
+
+        this.player.coolDownInvulnerability();
+
+        // console.log(this.player.lives);
+
+        // Check player collisions
+
+        if (this.playerCollision()) {
+          this.player.timeLastHit = performance.now();
+          console.log(this.player.lives);
+          this.player.lives -= 1;
+          this.player.invulnerable = true;
+        }
+
+        // Check proyectail collisions
+        this.player.bullets.forEach((bullet) => {
+          console.log(this.bulletCollision(bullet));
+
+          // if (check[0]) {
+          //   this.player.bullet.splice(index, 1);
+          //   this.targets.splice(check[1], 1);
+          // }
+        });
+
+        if (this.player.lives === 0) this.gameOver();
       },
 
       1000 / this.FPS
@@ -63,13 +89,14 @@ const game = {
   drawAll() {
     this.background.draw();
     this.player.draw();
-    this.obstacles.forEach((obs) => obs.draw());
-    console.log(this.player.bullets);
+    this.obstacles.forEach((obs) => {
+      obs.draw();
+    });
     this.player.bullets.forEach((bullet) => {
       bullet.draw();
       bullet.move();
     });
-    this.target.forEach((target) => target.draw());
+    this.targets.forEach((target) => target.draw());
   },
 
   clear() {
@@ -95,12 +122,12 @@ const game = {
 
   generateTarget() {
     if (this.frameCounter % 240 === 0) {
-      this.target.push(new Target(this.ctx, this.width, this.height, 8));
+      this.targets.push(new Target(this.ctx, this.width, this.height, 8));
     }
   },
 
   clearTarget() {
-    this.target = this.target.filter((tar) => tar.x >= -tar.w);
+    this.targets = this.targets.filter((tar) => tar.x >= -tar.w);
   },
 
   removeBullets() {
@@ -113,5 +140,36 @@ const game = {
       )
         return bullet;
     });
+  },
+
+  playerCollision() {
+    return this.obstacles.some((obs) => {
+      if (!this.player.invulnerable) {
+        return (
+          this.player.x < obs.x + obs.w &&
+          this.player.x + this.player.w > obs.x &&
+          this.player.y < obs.y + obs.h &&
+          this.player.h + this.player.y > obs.y
+        );
+      } else {
+        return false;
+      }
+    });
+  },
+
+  bulletCollision(bullet) {
+    return this.targets.some((target, index) => {
+      const bool =
+        bullet.x < target.x + target.w &&
+        bullet.x + bullet.w > target.x &&
+        bullet.y < target.y + target.h &&
+        bullet.h + bullet.y > target.y;
+      // console.log(bool);
+      return bool;
+    });
+  },
+
+  gameOver() {
+    clearInterval(this.interval);
   },
 };

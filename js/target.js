@@ -8,7 +8,7 @@ class Target {
     this.velX = speed;
 
     this.image = new Image();
-    this.image.src = "../img/TargetMovementLeft.png";
+    this.image.src = "../img/targets/TargetMovementLeft.png";
     this.image.frames = 0;
   }
 

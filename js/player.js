@@ -3,10 +3,12 @@ class Player {
     this.ctx = ctx;
     this.height = height;
     this.width = width;
+
     this.x = 50;
     this.y = 60;
     this.h = 100;
     this.w = 60;
+
     this.velx = 5;
     this.vely = 0;
     this.gravitySpeed = 0;
@@ -16,9 +18,22 @@ class Player {
       keyRightPressed: false,
       keyLeftPressed: false,
     };
-    this.crouch = false;
+
     this.bullets = [];
-    this.timeSinceLastAttack = -500;
+
+    this.lives = 3;
+    this.timeLastHit = -500;
+
+    this.invulnerable = false;
+    this.invulnerabilityTime = 2000;
+
+    this.crouch = false;
+    this.bulletsCoolDown = 500;
+    this.timeSinceLastAttack = -this.bulletsCoolDown;
+
+    this.image = new Image();
+    this.image.src = "../img/Player/ScottMovement.png";
+    this.image.frames = 0;
   }
 
   draw() {
@@ -26,15 +41,30 @@ class Player {
     if (this.crouch) {
       this.h = 60;
       this.w = 100;
-      this.ctx.rect(this.x, this.height - this.h, this.w, this.h);
-      this.ctx.fillRect(this.x, this.height - this.h, this.w, this.h);
+
+      // this.ctx.rect(this.x, this.height - this.h, this.w, this.h);
+      // this.ctx.fillRect(this.x, this.height - this.h, this.w, this.h);
     } else {
-      this.h = 100;
-      this.w = 60;
-      this.ctx.rect(this.x, this.y, this.w, this.h);
-      this.ctx.fillRect(this.x, this.y, this.w, this.h);
+      this.h = 150;
+      this.w = 110;
+      this.ctx.drawImage(
+        this.image,
+        57.75 * this.image.frames,
+        0,
+        57.75,
+        63,
+        this.x,
+        this.y,
+        this.w,
+        this.h
+      );
+
+      // this.ctx.rect(this.x, this.y, this.w, this.h);
+      // this.ctx.fillRect(this.x, this.y, this.w, this.h);
     }
-    this.ctx.stroke();
+    // this.ctx.stroke();
+
+    this.move(); // !!!!!!!!!!!!!!!!!!!!!!!!
   }
 
   moveRight() {
@@ -51,6 +81,9 @@ class Player {
   }
 
   move() {
+    this.image.frames++;
+    if (this.image.frames > 24) this.image.frames = 0;
+
     if (this.y < this.height - this.h) {
       // Está saltando!
       this.y += this.vely;
@@ -58,6 +91,12 @@ class Player {
     } else {
       this.y = this.height - this.h;
       this.vely = 1;
+    }
+  }
+
+  coolDownInvulnerability() {
+    if (performance.now() > this.timeLastHit + this.invulnerabilityTime) {
+      this.invulnerable = false;
     }
   }
 
@@ -103,12 +142,11 @@ class Player {
     });
 
     addEventListener("click", (key) => {
-      console.log(key);
-      if (key.timeStamp > this.timeSinceLastAttack + 500) {
+      if (key.timeStamp > this.timeSinceLastAttack + this.bulletsCoolDown) {
         this.timeSinceLastAttack = key.timeStamp;
         const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
         bullet.calculateVelocity();
-        console.log(bullet);
+        // console.log(bullet);
         this.bullets.push(bullet);
       }
     });
