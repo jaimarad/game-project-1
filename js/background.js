@@ -9,12 +9,19 @@ class Background {
     this.speed = speed;
 
     this.image = new Image();
-    this.image.src = '../img/BACKGROUNDTEST.jpg';
+    this.image.src = '../img/FONDOACORTADO.jpg';
 
   }
 
   draw() {
     this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    this.ctx.drawImage(this.image, this.x + this.width, this.y, this.width, this.height);
+    this.move()
   }
-
+  move() {
+    if (this.x <= -this.width) {
+      this.x = 0;
+    }
+    this.x -= this.speed;
+  }
 }

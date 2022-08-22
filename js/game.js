@@ -9,9 +9,9 @@ const game = {
   background: undefined,
   player: undefined,
   obstacles: [],
-  interval: undefined,
+  target: [],
 
-  keys: {},
+  interval: undefined,
 
   init() {
     this.canvas = document.getElementById("canvas");
@@ -28,10 +28,11 @@ const game = {
   },
 
   reset() {
-    this.background = new Background(this.ctx, this.width, this.height, 0);
+    this.background = new Background(this.ctx, this.width, this.height, 3);
     this.player = new Player(this.ctx, this.height, this.width);
     this.player.setListeners();
     this.obstacles = [];
+    this.target = [];
   },
 
   start() {
@@ -47,6 +48,7 @@ const game = {
         this.generateObstacles();
         this.clearObstacles();
         this.removeBullets();
+        this.generateTarget();
 
         if (this.player.keys.keyLeftPressed) this.player.moveLeft();
         if (this.player.keys.keyRightPressed) this.player.moveRight();
@@ -67,6 +69,7 @@ const game = {
       bullet.draw();
       bullet.move();
     });
+    this.target.forEach((target) => target.draw());
   },
 
   clear() {
@@ -74,13 +77,30 @@ const game = {
   },
 
   generateObstacles() {
-    if (this.frameCounter % 90 === 0) {
-      this.obstacles.push(new Obstacles(this.ctx, this.width, this.height, 0)); //Aquí llamamos a la clase obstacle.js
+    // let random = Math.floor(Math.random() * 300 + 200)
+    // console.log(random)
+    if (this.frameCounter % 160 === 0) {
+      this.obstacles.push(new Obstacles(this.ctx, this.width, this.height, 3)); //Aquí llamamos a la clase obstacle.js
+    }
+    if (this.frameCounter % 150 === 0) {
+      this.obstacles.push(
+        new ObstacleMiddle(this.ctx, this.width, this.height, 8)
+      ); //Aquí llamamos a la clase obstacle.js
     }
   },
 
   clearObstacles() {
     this.obstacles = this.obstacles.filter((obs) => obs.x >= -obs.w); //Esta x y w son de la clase obstacle.js
+  },
+
+  generateTarget() {
+    if (this.frameCounter % 240 === 0) {
+      this.target.push(new Target(this.ctx, this.width, this.height, 8));
+    }
+  },
+
+  clearTarget() {
+    this.target = this.target.filter((tar) => tar.x >= -tar.w);
   },
 
   removeBullets() {
