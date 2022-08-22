@@ -46,6 +46,7 @@ const game = {
 
         this.generateObstacles();
         this.clearObstacles();
+        this.removeBullets();
 
         if (this.player.keys.keyLeftPressed) this.player.moveLeft();
         if (this.player.keys.keyRightPressed) this.player.moveRight();
@@ -60,7 +61,12 @@ const game = {
   drawAll() {
     this.background.draw();
     this.player.draw();
-    this.obstacles.forEach((el) => el.draw());
+    this.obstacles.forEach((obs) => obs.draw());
+    console.log(this.player.bullets);
+    this.player.bullets.forEach((bullet) => {
+      bullet.draw();
+      bullet.move();
+    });
   },
 
   clear() {
@@ -75,5 +81,17 @@ const game = {
 
   clearObstacles() {
     this.obstacles = this.obstacles.filter((obs) => obs.x >= -obs.w); //Esta x y w son de la clase obstacle.js
+  },
+
+  removeBullets() {
+    this.player.bullets = this.player.bullets.filter((bullet) => {
+      if (
+        bullet.x >= 0 - bullet.w &&
+        bullet.y <= this.height &&
+        bullet.x <= this.width &&
+        bullet.y >= 0
+      )
+        return bullet;
+    });
   },
 };

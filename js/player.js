@@ -17,7 +17,10 @@ class Player {
       keyLeftPressed: false,
     };
     this.crouch = false;
+    this.bullets = [];
+    this.timeSinceLastAttack = -500;
   }
+
   draw() {
     this.ctx.beginPath();
     if (this.crouch) {
@@ -31,7 +34,6 @@ class Player {
       this.ctx.rect(this.x, this.y, this.w, this.h);
       this.ctx.fillRect(this.x, this.y, this.w, this.h);
     }
-
     this.ctx.stroke();
   }
 
@@ -61,21 +63,22 @@ class Player {
 
   setListeners() {
     addEventListener("keydown", (key) => {
-      console.log(key.key);
-      switch (key.key) {
-        case "ArrowRight": {
+      switch (key.keyCode) {
+        case 68: {
           this.keys.keyRightPressed = true;
           break;
         }
-        case "ArrowLeft": {
+        case 65: {
           this.keys.keyLeftPressed = true;
           break;
         }
-        case "ArrowUp": {
+        case 32:
+        case 87: {
+          key.preventDefault();
           if (this.y === this.height - this.h) this.jump();
           break;
         }
-        case "ArrowDown": {
+        case 83: {
           if (this.y === this.height - this.h) this.crouch = true;
           break;
         }
@@ -83,20 +86,30 @@ class Player {
     });
 
     addEventListener("keyup", (key) => {
-      console.log(key.key);
-      switch (key.key) {
-        case "ArrowRight": {
+      switch (key.keyCode) {
+        case 68: {
           this.keys.keyRightPressed = false;
           break;
         }
-        case "ArrowLeft": {
+        case 65: {
           this.keys.keyLeftPressed = false;
           break;
         }
-        case "ArrowDown": {
+        case 83: {
           if (this.y === this.height - this.h) this.crouch = false;
           break;
         }
+      }
+    });
+
+    addEventListener("click", (key) => {
+      console.log(key);
+      if (key.timeStamp > this.timeSinceLastAttack + 500) {
+        this.timeSinceLastAttack = key.timeStamp;
+        const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
+        bullet.calculateVelocity();
+        console.log(bullet);
+        this.bullets.push(bullet);
       }
     });
   }
