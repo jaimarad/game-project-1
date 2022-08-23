@@ -27,44 +27,79 @@ class Player {
     this.invulnerable = false;
     this.invulnerabilityTime = 2000;
 
-    this.crouch = false;
+    this.roll = false;
     this.bulletsCoolDown = 500;
     this.timeSinceLastAttack = -this.bulletsCoolDown;
 
     this.image = new Image();
-    this.image.src = "../img/Player/ScottMovement.png";
+    this.image.src = "../img/Player/ScottMovement.png"; //PREDETERMINADO PARA CORRER
+
+    this.imageJump = new Image();
+    this.imageJump.src = "../img/Player/ScottPilgrimJump-01.png";
+
+    this.imageRoll = new Image();
+    this.imageRoll.src = "../img/Player/ScottPilgrimRoll.png";
+
+    this.heartimg = new Image();
+    this.heartimg.src = "../img/Player/heart.png";
+
     this.image.frames = 0;
   }
 
   draw() {
     this.ctx.beginPath();
-    if (this.crouch) {
-      this.h = 60;
-      this.w = 100;
-
-      // this.ctx.rect(this.x, this.height - this.h, this.w, this.h);
-      // this.ctx.fillRect(this.x, this.height - this.h, this.w, this.h);
-    } else {
-      this.h = 150;
-      this.w = 110;
+    if (this.jumping) {
       this.ctx.drawImage(
-        this.image,
-        57.75 * this.image.frames,
+        this.imageJump,
+        49.25 * this.image.frames,
         0,
-        57.75,
+        49.25,
         63,
         this.x,
         this.y,
         this.w,
         this.h
       );
-
-      // this.ctx.rect(this.x, this.y, this.w, this.h);
-      // this.ctx.fillRect(this.x, this.y, this.w, this.h);
+    } else if (this.roll) {
+      this.ctx.drawImage(
+        this.imageRoll,
+        49 * this.image.frames,
+        0,
+        49,
+        53,
+        this.x,
+        this.y,
+        this.w,
+        this.h
+      );
+    } else {
+      this.h = 170;
+      this.w = 130;
+      this.ctx.drawImage(
+        this.image,
+        49 * this.image.frames,
+        0,
+        49,
+        63,
+        this.x,
+        this.y,
+        this.w,
+        this.h
+      );
     }
-    // this.ctx.stroke();
+  }
 
-    this.move(); // !!!!!!!!!!!!!!!!!!!!!!!!
+  animate() {
+    this.image.frames++;
+    if (this.image.frames > 4) this.image.frames = 0;
+  }
+
+  drawLives() {
+    let len = 0;
+    for (let live = 0; live <= this.lives - 1; live++) {
+      this.ctx.drawImage(this.heartimg, 50 + len, 50, 50, 50);
+      len += 60;
+    }
   }
 
   moveRight() {
@@ -78,12 +113,10 @@ class Player {
   jump() {
     this.vely -= 10;
     this.y -= 20;
+    this.jumping = true;
   }
 
   move() {
-    this.image.frames++;
-    if (this.image.frames > 24) this.image.frames = 0;
-
     if (this.y < this.height - this.h) {
       // Está saltando!
       this.y += this.vely;
@@ -91,6 +124,7 @@ class Player {
     } else {
       this.y = this.height - this.h;
       this.vely = 1;
+      this.jumping = false;
     }
   }
 
@@ -118,7 +152,7 @@ class Player {
           break;
         }
         case 83: {
-          if (this.y === this.height - this.h) this.crouch = true;
+          if (this.y === this.height - this.h) this.roll = true;
           break;
         }
       }
@@ -135,7 +169,7 @@ class Player {
           break;
         }
         case 83: {
-          if (this.y === this.height - this.h) this.crouch = false;
+          if (this.y === this.height - this.h) this.roll = false;
           break;
         }
       }
@@ -146,7 +180,6 @@ class Player {
         this.timeSinceLastAttack = key.timeStamp;
         const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
         bullet.calculateVelocity();
-        // console.log(bullet);
         this.bullets.push(bullet);
       }
     });

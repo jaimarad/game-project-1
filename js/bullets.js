@@ -11,6 +11,7 @@ class Bullet {
   }
 
   draw() {
+    this.ctx.fillStyle = "white";
     this.ctx.fillRect(this.x, this.y, this.w, this.h);
   }
 

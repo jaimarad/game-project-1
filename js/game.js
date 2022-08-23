@@ -11,6 +11,9 @@ const game = {
   obstacles: [],
   targets: [],
 
+  obsRate: 160,
+  pigRate: 240,
+
   interval: undefined,
 
   init() {
@@ -39,10 +42,13 @@ const game = {
     this.reset();
     this.interval = setInterval(
       () => {
-        this.frameCounter > 5000
+        this.frameCounter > 6000
           ? (this.frameCounter = 0)
           : this.frameCounter++;
         this.clear();
+
+        if (this.player.lives === 0) this.gameOver();
+
         this.drawAll();
 
         this.generateObstacles();
@@ -54,32 +60,31 @@ const game = {
         if (this.player.keys.keyLeftPressed) this.player.moveLeft();
         if (this.player.keys.keyRightPressed) this.player.moveRight();
 
-        // this.player.move(); !!!!!!!!!!!!!!!!!
+        if (this.frameCounter % 10 === 0) {
+          this.player.animate();
+        }
+
+        if (this.frameCounter % 2 === 0) {
+          this.targets.forEach((target) => target.animate());
+        }
+
+        this.player.move(); // !!!!!!!!!!!!!!!!!!!!!
 
         this.player.coolDownInvulnerability();
 
-        // console.log(this.player.lives);
-
         // Check player collisions
-
         if (this.playerCollision()) {
           this.player.timeLastHit = performance.now();
-          console.log(this.player.lives);
           this.player.lives -= 1;
           this.player.invulnerable = true;
         }
 
-        // Check proyectail collisions
-        this.player.bullets.forEach((bullet) => {
-          console.log(this.bulletCollision(bullet));
-
-          // if (check[0]) {
-          //   this.player.bullet.splice(index, 1);
-          //   this.targets.splice(check[1], 1);
-          // }
+        // Check bullets collisions
+        this.player.bullets.some((bullet, index) => {
+          if (this.bulletCollision(bullet)) {
+            this.player.bullets.splice(index, 1);
+          }
         });
-
-        if (this.player.lives === 0) this.gameOver();
       },
 
       1000 / this.FPS
@@ -88,14 +93,19 @@ const game = {
 
   drawAll() {
     this.background.draw();
+
     this.player.draw();
-    this.obstacles.forEach((obs) => {
-      obs.draw();
-    });
+    this.player.drawLives();
+
     this.player.bullets.forEach((bullet) => {
       bullet.draw();
       bullet.move();
     });
+
+    this.obstacles.forEach((obs) => {
+      obs.draw();
+    });
+
     this.targets.forEach((target) => target.draw());
   },
 
@@ -104,15 +114,23 @@ const game = {
   },
 
   generateObstacles() {
-    // let random = Math.floor(Math.random() * 300 + 200)
-    // console.log(random)
-    if (this.frameCounter % 160 === 0) {
-      this.obstacles.push(new Obstacles(this.ctx, this.width, this.height, 3)); //Aquí llamamos a la clase obstacle.js
+    if (this.frameCounter % 1500 === 0) {
+      this.obsRate -= 10;
+      this.pigRate += 10;
     }
-    if (this.frameCounter % 150 === 0) {
-      this.obstacles.push(
-        new ObstacleMiddle(this.ctx, this.width, this.height, 8)
-      ); //Aquí llamamos a la clase obstacle.js
+    if (this.frameCounter % this.obsRate === 0) {
+      let rand = Math.round(Math.random());
+      // console.log(rand);
+      if (rand === 1) {
+        this.obstacles.push(
+          new Obstacles(this.ctx, this.width, this.height, 3)
+        ); //Aquí llamamos a la clase obstacle.js
+      } else {
+        let vel = Math.floor(Math.random() * 4) + 4;
+        this.obstacles.push(
+          new ObstacleMiddle(this.ctx, this.width, this.height, vel)
+        ); //Aquí llamamos a la clase obstacle.js
+      }
     }
   },
 
@@ -121,7 +139,7 @@ const game = {
   },
 
   generateTarget() {
-    if (this.frameCounter % 240 === 0) {
+    if (this.frameCounter % this.pigRate === 0) {
       this.targets.push(new Target(this.ctx, this.width, this.height, 8));
     }
   },
@@ -164,7 +182,7 @@ const game = {
         bullet.x + bullet.w > target.x &&
         bullet.y < target.y + target.h &&
         bullet.h + bullet.y > target.y;
-      // console.log(bool);
+      if (bool) this.targets.splice(index, 1);
       return bool;
     });
   },

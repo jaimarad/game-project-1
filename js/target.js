@@ -27,9 +27,12 @@ class Target {
     this.move();
   }
 
-  move() {
+  animate() {
     this.image.frames++;
     if (this.image.frames > 4) this.image.frames = 0;
+  }
+
+  move() {
     this.x -= this.velX;
   }
 }

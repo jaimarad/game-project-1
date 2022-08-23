@@ -35,17 +35,21 @@ class ObstacleMiddle extends Obstacles {
   }
 
   draw() {
-    this.ctx.drawImage(
-      this.image,
-      146 * this.image.frames,
-      0,
-      99,
-      136,
-      this.x,
-      this.y,
-      this.w,
-      this.h
-    );
+    // this.ctx.drawImage(
+    //   this.image,
+    //   146 * this.image.frames,
+    //   0,
+    //   99,
+    //   136,
+    //   this.x,
+    //   this.y,
+    //   this.w,
+    //   this.h
+    // );
+    this.ctx.fillStyle = "white";
+
+    this.ctx.rect(this.x, this.y, this.w, this.h);
+    this.ctx.fillRect(this.x, this.y, this.w, this.h);
     this.move();
   }
 
