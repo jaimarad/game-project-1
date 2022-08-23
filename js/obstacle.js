@@ -5,6 +5,14 @@ class Obstacles {
     this.h = 100;
     this.x = width; // canvas width
     this.y = height - this.h; // initialize but changes with the typen of obstacles
+
+    this.hitbox = {
+      x: this.x + 10,
+      y: this.y + 5,
+      w: this.w - 20,
+      h: this.h,
+    };
+
     this.velX = speed;
 
     this.image = new Image();
@@ -12,12 +20,25 @@ class Obstacles {
   }
 
   draw() {
+    this.ctx.strokeRect(
+      this.hitbox.x,
+      this.hitbox.y,
+      this.hitbox.w,
+      this.hitbox.h
+    );
+
     this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
     this.move();
   }
 
+  animate() {
+    this.image.frames++;
+    if (this.image.frames > 0) this.image.frames = 0;
+  }
+
   move() {
     this.x -= this.velX;
+    this.hitbox.x = this.x + 10;
   }
 }
 
@@ -28,34 +49,47 @@ class ObstacleMiddle extends Obstacles {
     this.h = 50;
     this.x = width;
     this.y = Math.floor(Math.random() * (height - 500) + 300);
-    this.velX = speed;
-    this.image = new Image();
-    this.image.src = "../img/targets/TargetExplode.png";
+
+    this.hitbox = {
+      x: this.x,
+      y: this.y,
+      w: this.w,
+      h: this.h,
+    };
+
+    this.imageMiddle = new Image();
+    this.imageMiddle.src = "../img/obstacles/MiddleObstacle.png";
     this.image.frames = 0;
   }
 
   draw() {
-    // this.ctx.drawImage(
-    //   this.image,
-    //   146 * this.image.frames,
-    //   0,
-    //   99,
-    //   136,
-    //   this.x,
-    //   this.y,
-    //   this.w,
-    //   this.h
-    // );
-    this.ctx.fillStyle = "white";
-
-    this.ctx.rect(this.x, this.y, this.w, this.h);
-    this.ctx.fillRect(this.x, this.y, this.w, this.h);
+    this.ctx.strokeRect(
+      this.hitbox.x,
+      this.hitbox.y,
+      this.hitbox.w,
+      this.hitbox.h
+    );
+    this.ctx.drawImage(
+      this.imageMiddle,
+      101.5 * this.image.frames,
+      0,
+      101.5,
+      70,
+      this.x,
+      this.y,
+      this.w,
+      this.h
+    );
     this.move();
   }
 
-  move() {
+  animate() {
     this.image.frames++;
-    if (this.image.frames > 8) this.image.frames = 0;
+    if (this.image.frames > 3) this.image.frames = 0;
+  }
+
+  move() {
     this.x -= this.velX;
+    this.hitbox.x = this.x;
   }
 }

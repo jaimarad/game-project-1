@@ -5,10 +5,15 @@ const game = {
   height: undefined,
   FPS: 60,
   frameCounter: 0,
+  // FLAG
+  // canStart: true,
 
   background: undefined,
   player: undefined,
+  score: 0,
+
   obstacles: [],
+  obstaclesMiddle: [],
   targets: [],
 
   obsRate: 160,
@@ -24,8 +29,8 @@ const game = {
   },
 
   setDimensions() {
-    this.height = window.innerHeight - 5;
-    this.width = window.innerWidth - 5;
+    this.height = window.innerHeight;
+    this.width = window.innerWidth;
     this.canvas.height = this.height;
     this.canvas.width = this.width;
   },
@@ -60,17 +65,36 @@ const game = {
         if (this.player.keys.keyLeftPressed) this.player.moveLeft();
         if (this.player.keys.keyRightPressed) this.player.moveRight();
 
+        if (this.frameCounter % 60 === 0) {
+          this.score++;
+        }
+
         if (this.frameCounter % 10 === 0) {
-          this.player.animate();
+          if (this.player.roll) {
+            this.player.animate(4);
+          } else {
+            this.player.animate(8);
+          }
         }
 
         if (this.frameCounter % 2 === 0) {
           this.targets.forEach((target) => target.animate());
         }
 
+        if (this.frameCounter % 6 === 0) {
+          this.obstacles.forEach((obs) => obs.animate());
+        }
+
+        if (this.frameCounter % 8 === 0) {
+          this.obstaclesMiddle.forEach((obstacleMid) => obstacleMid.animate());
+        }
+
         this.player.move(); // !!!!!!!!!!!!!!!!!!!!!
 
         this.player.coolDownInvulnerability();
+        this.player.coolDownRoll();
+
+        this.displayScore();
 
         // Check player collisions
         if (this.playerCollision()) {
@@ -91,6 +115,12 @@ const game = {
     );
   },
 
+  displayScore() {
+    this.ctx.fillStyle = "white";
+    this.ctx.font = "40px Helvetica";
+    this.ctx.fillText("Score: " + this.score, 60, 50);
+  },
+
   drawAll() {
     this.background.draw();
 
@@ -106,6 +136,10 @@ const game = {
       obs.draw();
     });
 
+    this.obstaclesMiddle.forEach((obs) => {
+      obs.draw();
+    });
+
     this.targets.forEach((target) => target.draw());
   },
 
@@ -115,7 +149,9 @@ const game = {
 
   generateObstacles() {
     if (this.frameCounter % 1500 === 0) {
-      this.obsRate -= 10;
+      if (this.obsRate > 120) {
+        this.obsRate -= 10;
+      }
       this.pigRate += 10;
     }
     if (this.frameCounter % this.obsRate === 0) {
@@ -127,7 +163,7 @@ const game = {
         ); //Aquí llamamos a la clase obstacle.js
       } else {
         let vel = Math.floor(Math.random() * 4) + 4;
-        this.obstacles.push(
+        this.obstaclesMiddle.push(
           new ObstacleMiddle(this.ctx, this.width, this.height, vel)
         ); //Aquí llamamos a la clase obstacle.js
       }
@@ -136,6 +172,9 @@ const game = {
 
   clearObstacles() {
     this.obstacles = this.obstacles.filter((obs) => obs.x >= -obs.w); //Esta x y w son de la clase obstacle.js
+    this.obstaclesMiddle = this.obstaclesMiddle.filter(
+      (obs) => obs.x >= -obs.w
+    ); //Esta x y w son de la clase obstacle.js
   },
 
   generateTarget() {
@@ -161,13 +200,14 @@ const game = {
   },
 
   playerCollision() {
-    return this.obstacles.some((obs) => {
-      if (!this.player.invulnerable) {
+    const obsArr = [...this.obstacles, ...this.obstaclesMiddle];
+    return obsArr.some((obs) => {
+      if (!this.player.invulnerable && !this.player.roll) {
         return (
-          this.player.x < obs.x + obs.w &&
-          this.player.x + this.player.w > obs.x &&
-          this.player.y < obs.y + obs.h &&
-          this.player.h + this.player.y > obs.y
+          this.player.hitbox.x < obs.hitbox.x + obs.hitbox.w &&
+          this.player.hitbox.x + this.player.hitbox.w - 10 > obs.hitbox.x &&
+          this.player.hitbox.y < obs.hitbox.y + obs.hitbox.h &&
+          this.player.hitbox.y + this.player.hitbox.h - 10 > obs.hitbox.y
         );
       } else {
         return false;
@@ -182,7 +222,9 @@ const game = {
         bullet.x + bullet.w > target.x &&
         bullet.y < target.y + target.h &&
         bullet.h + bullet.y > target.y;
-      if (bool) this.targets.splice(index, 1);
+      if (bool) {
+        this.targets.splice(index, 1);
+      }
       return bool;
     });
   },

@@ -1,16 +1,17 @@
-Obstacles:
+- Sonido
 
-- generate new obstacle periodically
-- and move through the screen
+- middle obs
 
-Background:
+- score
 
-- print and move
+- hitbox
 
-Player:
+- img bullet
 
-- Jump
-- Move
-- Bullets?
+- Pantalla inicio
 
-Pantalla de Inicio?
+- Pantalla final - scoreboard?
+
+- Roll invulnerability
+
+-

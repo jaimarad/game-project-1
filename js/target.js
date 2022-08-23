@@ -10,9 +10,22 @@ class Target {
     this.image = new Image();
     this.image.src = "../img/targets/TargetMovementLeft.png";
     this.image.frames = 0;
+
+    this.hitbox = {
+      x: this.x + 10,
+      y: this.y + 15,
+      w: this.w - 10,
+      h: this.h - 15,
+    };
   }
 
   draw() {
+    this.ctx.strokeRect(
+      this.hitbox.x,
+      this.hitbox.y,
+      this.hitbox.w,
+      this.hitbox.h
+    );
     this.ctx.drawImage(
       this.image,
       97 * this.image.frames,
@@ -34,5 +47,6 @@ class Target {
 
   move() {
     this.x -= this.velX;
+    this.hitbox.x = this.x + 20;
   }
 }

@@ -8,11 +8,12 @@ class Bullet {
     this.vel = 20;
     this.mouseX = mouseX;
     this.mouseY = mouseY;
+    this.image = new Image();
+    this.image.src = "../img/Player/bullet.png";
   }
 
   draw() {
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(this.x, this.y, this.w, this.h);
+    this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
   }
 
   calculateVelocity() {

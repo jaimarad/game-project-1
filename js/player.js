@@ -6,8 +6,15 @@ class Player {
 
     this.x = 50;
     this.y = 60;
-    this.h = 100;
-    this.w = 60;
+    this.h = 170;
+    this.w = 130;
+
+    this.hitbox = {
+      x: this.x + 30,
+      y: this.y + 30,
+      w: this.w - 50,
+      h: this.h - 30,
+    };
 
     this.velx = 5;
     this.vely = 0;
@@ -28,7 +35,10 @@ class Player {
     this.invulnerabilityTime = 2000;
 
     this.roll = false;
-    this.bulletsCoolDown = 500;
+    this.lastRoll = -3000;
+    this.rollCooldown = 3000;
+
+    this.bulletsCoolDown = 1000;
     this.timeSinceLastAttack = -this.bulletsCoolDown;
 
     this.image = new Image();
@@ -47,20 +57,39 @@ class Player {
   }
 
   draw() {
-    this.ctx.beginPath();
+    this.ctx.strokeRect(
+      this.hitbox.x,
+      this.hitbox.y,
+      this.hitbox.w,
+      this.hitbox.h
+    );
+
+    if (this.invulnerable || this.roll) this.ctx.globalAlpha = 0.5;
+
     if (this.jumping) {
+      this.w = 130;
+      this.h = 170;
+      this.hitbox.w = this.w - 70;
+      this.hitbox.h = this.h - 50;
+      this.hitbox.y = this.y - 30;
+
       this.ctx.drawImage(
         this.imageJump,
         49.25 * this.image.frames,
         0,
         49.25,
-        63,
+        76,
         this.x,
         this.y,
         this.w,
         this.h
       );
     } else if (this.roll) {
+      this.h = 150;
+      this.w = 150;
+      this.hitbox.w = this.w - 50;
+      this.hitbox.h = this.h - 30;
+
       this.ctx.drawImage(
         this.imageRoll,
         49 * this.image.frames,
@@ -75,6 +104,9 @@ class Player {
     } else {
       this.h = 170;
       this.w = 130;
+      this.hitbox.w = this.w - 50;
+      this.hitbox.h = this.h - 30;
+
       this.ctx.drawImage(
         this.image,
         49 * this.image.frames,
@@ -87,11 +119,12 @@ class Player {
         this.h
       );
     }
+    this.ctx.globalAlpha = 1;
   }
 
-  animate() {
+  animate(anim) {
     this.image.frames++;
-    if (this.image.frames > 4) this.image.frames = 0;
+    if (this.image.frames > anim) this.image.frames = 0;
   }
 
   drawLives() {
@@ -103,16 +136,23 @@ class Player {
   }
 
   moveRight() {
-    if (this.x < this.width - this.w) this.x += this.velx;
+    if (this.x < this.width - this.w) {
+      this.x += this.velx;
+      this.hitbox.x = this.x + 30;
+    }
   }
 
   moveLeft() {
-    if (this.x > 0) this.x -= this.velx;
+    if (this.x > 0) {
+      this.x -= this.velx;
+      this.hitbox.x = this.x + 30;
+    }
   }
 
   jump() {
     this.vely -= 10;
     this.y -= 20;
+    this.hitbox.y = this.y + 30;
     this.jumping = true;
   }
 
@@ -120,9 +160,11 @@ class Player {
     if (this.y < this.height - this.h) {
       // Está saltando!
       this.y += this.vely;
+      this.hitbox.y = this.y + 30;
       this.vely += this.gravity;
     } else {
       this.y = this.height - this.h;
+      this.hitbox.y = this.y + 30;
       this.vely = 1;
       this.jumping = false;
     }
@@ -131,6 +173,12 @@ class Player {
   coolDownInvulnerability() {
     if (performance.now() > this.timeLastHit + this.invulnerabilityTime) {
       this.invulnerable = false;
+    }
+  }
+
+  coolDownRoll() {
+    if (performance.now() > this.lastRoll + 750) {
+      this.roll = false;
     }
   }
 
@@ -152,7 +200,13 @@ class Player {
           break;
         }
         case 83: {
-          if (this.y === this.height - this.h) this.roll = true;
+          if (key.timeStamp > this.lastRoll + this.rollCooldown) {
+            this.lastRoll = key.timeStamp;
+            if (this.y === this.height - this.h) {
+              this.roll = true;
+            }
+          }
+
           break;
         }
       }
@@ -168,10 +222,10 @@ class Player {
           this.keys.keyLeftPressed = false;
           break;
         }
-        case 83: {
-          if (this.y === this.height - this.h) this.roll = false;
-          break;
-        }
+        // case 83: {
+        //   this.roll = false;
+        //   break;
+        // }
       }
     });
 
