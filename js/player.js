@@ -17,9 +17,10 @@ class Player {
     };
 
     this.velx = 5;
+    this.velxl = 5;
     this.vely = 0;
     this.gravitySpeed = 0;
-    this.gravity = 0.2;
+    this.gravity = 0.35;
 
     this.keys = {
       keyRightPressed: false,
@@ -34,9 +35,11 @@ class Player {
     this.invulnerable = false;
     this.invulnerabilityTime = 2000;
 
+    this.jumping = false;
+
     this.roll = false;
-    this.lastRoll = -3000;
-    this.rollCooldown = 3000;
+    this.lastRoll = -6000;
+    this.rollCooldown = 6000;
 
     this.bulletsCoolDown = 1000;
     this.timeSinceLastAttack = -this.bulletsCoolDown;
@@ -52,6 +55,9 @@ class Player {
 
     this.heartimg = new Image();
     this.heartimg.src = "../img/Player/heart.png";
+
+    this.rollicon = new Image();
+    this.rollicon.src = "../img/Player/rollicon.png";
 
     this.image.frames = 0;
   }
@@ -135,6 +141,14 @@ class Player {
     }
   }
 
+  drawRoll() {
+    if (performance.now() < this.lastRoll + this.rollCooldown) {
+      this.ctx.globalAlpha = 0.5;
+    }
+    this.ctx.drawImage(this.rollicon, 50, 120, 60, 60);
+    this.ctx.globalAlpha = 1;
+  }
+
   moveRight() {
     if (this.x < this.width - this.w) {
       this.x += this.velx;
@@ -144,7 +158,7 @@ class Player {
 
   moveLeft() {
     if (this.x > 0) {
-      this.x -= this.velx;
+      this.x -= this.velxl;
       this.hitbox.x = this.x + 30;
     }
   }
@@ -222,19 +236,17 @@ class Player {
           this.keys.keyLeftPressed = false;
           break;
         }
-        // case 83: {
-        //   this.roll = false;
-        //   break;
-        // }
       }
     });
 
     addEventListener("click", (key) => {
-      if (key.timeStamp > this.timeSinceLastAttack + this.bulletsCoolDown) {
-        this.timeSinceLastAttack = key.timeStamp;
-        const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
-        bullet.calculateVelocity();
-        this.bullets.push(bullet);
+      if (!this.roll) {
+        if (key.timeStamp > this.timeSinceLastAttack + this.bulletsCoolDown) {
+          this.timeSinceLastAttack = key.timeStamp;
+          const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
+          bullet.calculateVelocity();
+          this.bullets.push(bullet);
+        }
       }
     });
   }

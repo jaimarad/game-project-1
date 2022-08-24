@@ -7,6 +7,7 @@ class Background {
     this.height = height;
     this.width = width;
     this.speed = speed;
+    this.acc = 0.001;
 
     this.image = new Image();
     this.image.src = "../img/background/FONDOACORTADO.jpg";
@@ -24,6 +25,7 @@ class Background {
     this.move();
   }
   move() {
+    this.speed += this.acc;
     if (this.x <= -this.width) {
       this.x = 0;
     }

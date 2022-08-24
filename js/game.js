@@ -15,6 +15,7 @@ const game = {
   obstacles: [],
   obstaclesMiddle: [],
   targets: [],
+  hearts: [],
 
   obsRate: 160,
   pigRate: 240,
@@ -37,7 +38,12 @@ const game = {
 
   reset() {
     this.background = new Background(this.ctx, this.width, this.height, 3);
-    this.player = new Player(this.ctx, this.height, this.width);
+    this.player = new Player(
+      this.ctx,
+      this.height,
+      this.width,
+      this.background.speed
+    );
     this.player.setListeners();
     this.obstacles = [];
     this.targets = [];
@@ -52,8 +58,6 @@ const game = {
           : this.frameCounter++;
         this.clear();
 
-        if (this.player.lives === 0) this.gameOver();
-
         this.drawAll();
 
         this.generateObstacles();
@@ -62,12 +66,12 @@ const game = {
         this.removeBullets();
         this.generateTarget();
 
+        this.player.velxl = this.background.speed + 2;
+
         if (this.player.keys.keyLeftPressed) this.player.moveLeft();
         if (this.player.keys.keyRightPressed) this.player.moveRight();
 
-        if (this.frameCounter % 60 === 0) {
-          this.score++;
-        }
+        if (this.frameCounter % 60 === 0) this.score++;
 
         if (this.frameCounter % 10 === 0) {
           if (this.player.roll) {
@@ -82,11 +86,16 @@ const game = {
         }
 
         if (this.frameCounter % 6 === 0) {
-          this.obstacles.forEach((obs) => obs.animate());
+          this.obstacles.forEach((obs) => {
+            obs.speed = this.background.speed;
+            obs.animate();
+          });
         }
 
         if (this.frameCounter % 8 === 0) {
-          this.obstaclesMiddle.forEach((obstacleMid) => obstacleMid.animate());
+          this.obstaclesMiddle.forEach((obstacleMid) => {
+            obstacleMid.animate();
+          });
         }
 
         this.player.move(); // !!!!!!!!!!!!!!!!!!!!!
@@ -109,6 +118,13 @@ const game = {
             this.player.bullets.splice(index, 1);
           }
         });
+
+        // Hearts collisions
+        if (this.heartCollision()) {
+          if (this.player.lives < 5) this.player.lives++;
+        }
+
+        if (this.player.lives === 0) this.gameOver();
       },
 
       1000 / this.FPS
@@ -126,6 +142,7 @@ const game = {
 
     this.player.draw();
     this.player.drawLives();
+    this.player.drawRoll();
 
     this.player.bullets.forEach((bullet) => {
       bullet.draw();
@@ -141,6 +158,8 @@ const game = {
     });
 
     this.targets.forEach((target) => target.draw());
+
+    this.hearts.forEach((heart) => heart.draw());
   },
 
   clear() {
@@ -149,7 +168,7 @@ const game = {
 
   generateObstacles() {
     if (this.frameCounter % 1500 === 0) {
-      if (this.obsRate > 120) {
+      if (this.obsRate > 80) {
         this.obsRate -= 10;
       }
       this.pigRate += 10;
@@ -159,12 +178,22 @@ const game = {
       // console.log(rand);
       if (rand === 1) {
         this.obstacles.push(
-          new Obstacles(this.ctx, this.width, this.height, 3)
+          new Obstacles(
+            this.ctx,
+            this.width,
+            this.height,
+            this.background.speed
+          )
         ); //Aquí llamamos a la clase obstacle.js
       } else {
-        let vel = Math.floor(Math.random() * 4) + 4;
+        const vel = Math.floor(Math.random() * 4) + 1;
         this.obstaclesMiddle.push(
-          new ObstacleMiddle(this.ctx, this.width, this.height, vel)
+          new ObstacleMiddle(
+            this.ctx,
+            this.width,
+            this.height,
+            this.background.speed + vel
+          )
         ); //Aquí llamamos a la clase obstacle.js
       }
     }
@@ -179,12 +208,18 @@ const game = {
 
   generateTarget() {
     if (this.frameCounter % this.pigRate === 0) {
-      this.targets.push(new Target(this.ctx, this.width, this.height, 8));
+      this.targets.push(
+        new Target(this.ctx, this.width, this.height, this.background.speed + 3)
+      );
     }
   },
 
   clearTarget() {
     this.targets = this.targets.filter((tar) => tar.x >= -tar.w);
+  },
+
+  clearHearts() {
+    this.hearts = this.hearts.filter((heart) => heart.x >= -heart.w);
   },
 
   removeBullets() {
@@ -216,20 +251,54 @@ const game = {
   },
 
   bulletCollision(bullet) {
-    return this.targets.some((target, index) => {
+    const collisionables = [...this.targets, ...this.obstaclesMiddle];
+    return collisionables.some((target, index) => {
       const bool =
-        bullet.x < target.x + target.w &&
-        bullet.x + bullet.w > target.x &&
-        bullet.y < target.y + target.h &&
-        bullet.h + bullet.y > target.y;
+        bullet.x < target.hitbox.x + target.hitbox.w &&
+        bullet.x + bullet.w > target.hitbox.x &&
+        bullet.y < target.hitbox.y + target.hitbox.h &&
+        bullet.h + bullet.y > target.hitbox.y;
       if (bool) {
-        this.targets.splice(index, 1);
+        const removed = this.targets.splice(index, 1);
+        if (removed.length === 1) {
+          this.score += 100;
+          const rand = Math.round(Math.random());
+          if (rand === 1) {
+            const heart = new Heart(
+              this.ctx,
+              removed[0].x,
+              removed[0].y,
+              this.background.speed,
+              this.height
+            );
+            this.hearts.push(heart);
+          }
+        }
       }
+      return bool;
+    });
+  },
+
+  heartCollision() {
+    return this.hearts.some((heart, index) => {
+      const bool =
+        this.player.hitbox.x < heart.x + heart.w &&
+        this.player.hitbox.x + this.player.hitbox.w - 10 > heart.x &&
+        this.player.hitbox.y < heart.y + heart.h &&
+        this.player.hitbox.y + this.player.hitbox.h - 10 > heart.y;
+      if (bool) this.hearts.splice(index, 1);
       return bool;
     });
   },
 
   gameOver() {
     clearInterval(this.interval);
+
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    this.ctx.fillStyle = "white";
+    this.ctx.font = "30px Alumni Sans Pinstripe";
+    this.ctx.fillText("GAME OVER", this.width / 2, this.height / 2);
   },
 };

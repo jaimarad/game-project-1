@@ -5,7 +5,7 @@ class Target {
     this.h = 100;
     this.x = width; // canvas width
     this.y = Math.floor(Math.random() * 150); // initialize but changes with the typen of obstacles
-    this.velX = speed;
+    this.speed = speed;
 
     this.image = new Image();
     this.image.src = "../img/targets/TargetMovementLeft.png";
@@ -13,9 +13,9 @@ class Target {
 
     this.hitbox = {
       x: this.x + 10,
-      y: this.y + 15,
-      w: this.w - 10,
-      h: this.h - 15,
+      y: this.y + 30,
+      w: this.w - 30,
+      h: this.h - 30,
     };
   }
 
@@ -46,7 +46,7 @@ class Target {
   }
 
   move() {
-    this.x -= this.velX;
+    this.x -= this.speed;
     this.hitbox.x = this.x + 20;
   }
 }

@@ -13,7 +13,7 @@ class Obstacles {
       h: this.h,
     };
 
-    this.velX = speed;
+    this.speed = speed;
 
     this.image = new Image();
     this.image.src = "../img/obstacles/TrashCan.png";
@@ -37,7 +37,7 @@ class Obstacles {
   }
 
   move() {
-    this.x -= this.velX;
+    this.x -= this.speed;
     this.hitbox.x = this.x + 10;
   }
 }
@@ -46,7 +46,7 @@ class ObstacleMiddle extends Obstacles {
   constructor(ctx, width, height, speed) {
     super(ctx, width, height, speed);
     this.w = 150;
-    this.h = 50;
+    this.h = 80;
     this.x = width;
     this.y = Math.floor(Math.random() * (height - 500) + 300);
 
@@ -89,7 +89,7 @@ class ObstacleMiddle extends Obstacles {
   }
 
   move() {
-    this.x -= this.velX;
+    this.x -= this.speed;
     this.hitbox.x = this.x;
   }
 }
