@@ -20,6 +20,8 @@ const game = {
   obsRate: undefined,
   pigRate: undefined,
 
+  deadPigs: undefined,
+
   interval: undefined,
 
   audioGame: new Audio(),
@@ -55,6 +57,7 @@ const game = {
     this.pigRate = 240;
     this.obstacles = [];
     this.targets = [];
+    this.deadPigs = 0;
   },
 
   start() {
@@ -290,6 +293,7 @@ const game = {
           this.audioPig.play();
 
           this.score += 100;
+          this.deadPigs++;
           const rand = Math.round(Math.random());
           if (rand === 1) {
             const heart = new Heart(
@@ -351,6 +355,12 @@ const game = {
       this.height / 3 + this.height * 0.1
     );
 
+    this.ctx.fillText(
+      "YOU HAVE KILLED: " + this.deadPigs + " PIGS",
+      this.width / 2,
+      this.height / 3 + this.height * 0.2
+    );
+
     const body = document.querySelector("body");
     body.style.backgroundColor = "black";
 
@@ -362,7 +372,7 @@ const game = {
 
       this.ctx.clearRect(
         0,
-        this.height / 3 + this.height * 0.1,
+        this.height / 3 + this.height * 0.2,
         this.width,
         this.height
       );
@@ -370,7 +380,7 @@ const game = {
       this.ctx.fillStyle = "black";
       this.ctx.fillRect(
         0,
-        this.height / 3 + this.height * 0.1,
+        this.height / 3 + this.height * 0.2,
         this.width,
         this.height
       );
@@ -379,7 +389,7 @@ const game = {
       this.ctx.fillText(
         "PRESS SPACE TO RESTART",
         this.width / 2,
-        this.height / 3 + this.height * 0.2
+        this.height / 3 + this.height * 0.3
       );
     }, 500);
 
