@@ -328,10 +328,10 @@ const game = {
 
     this.audioGame.pause();
 
-    this.clearObstacles();
-    this.clearTarget();
-    this.clearHearts();
-    this.removeBullets();
+    this.obstacles = [];
+    this.obstaclesMiddle = [];
+    this.targets = [];
+    this.bullets = [];
 
     this.canStart = true;
 
@@ -387,20 +387,20 @@ const game = {
       this.ctx.fillStyle = "white";
 
       this.ctx.fillText(
-        "PRESS SPACE TO RESTART",
+        "PRESS R TO RESTART",
         this.width / 2,
         this.height / 3 + this.height * 0.3
       );
     }, 500);
 
     addEventListener("keydown", (key) => {
-      if (key.keyCode === 32) {
-        key.preventDefault();
+      if (key.keyCode === 82) {
+        clearInterval(blinkInterval);
         if (this.canStart) {
-          clearInterval(blinkInterval);
           this.init();
         }
       }
+      if (key.keyCode === 32) key.preventDefault();
     });
   },
 };
