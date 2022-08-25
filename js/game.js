@@ -193,7 +193,7 @@ const game = {
   },
 
   generateObstacles() {
-    if (this.frameCounter % 1500 === 0) {
+    if (this.frameCounter % 1000 === 0) {
       if (this.obsRate > 80) {
         this.obsRate -= 10;
       }

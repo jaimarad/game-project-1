@@ -8,7 +8,7 @@ class Heart {
     this.h = 60;
     this.vely = 1;
     this.velx = speed;
-    this.gravity = 0.35;
+    this.gravity = 0.65;
 
     this.image = new Image();
     this.image.src = "../img/targets/heart.png";
