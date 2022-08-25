@@ -60,6 +60,19 @@ const game = {
   start() {
     this.audioGame.src = "../sounds/ScottTheme.mp3";
     this.audioGame.volume = 0.4;
+
+    if (typeof this.audioGame.loop == "boolean") {
+      this.audioGame.loop = true;
+    } else {
+      this.audioGame.addEventListener(
+        "ended",
+        function () {
+          this.currentTime = 0;
+          this.play();
+        },
+        false
+      );
+    }
     this.audioGame.play();
 
     this.canStart = false;
