@@ -22,6 +22,9 @@ const game = {
 
   interval: undefined,
 
+  audioGame: new Audio(),
+  audioPig: new Audio(),
+
   init() {
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
@@ -50,6 +53,10 @@ const game = {
   },
 
   start() {
+    this.audioGame.src = "../sounds/ScottTheme.mp3";
+    this.audioGame.volume = 0.4;
+    this.audioGame.play();
+
     this.reset();
     this.interval = setInterval(
       () => {
@@ -107,6 +114,10 @@ const game = {
 
         // Check player collisions
         if (this.playerCollision()) {
+          const audioCrash = new Audio();
+          audioCrash.src = "../sounds/Choque.mp3";
+          audioCrash.play();
+
           this.player.timeLastHit = performance.now();
           this.player.lives -= 1;
           this.player.invulnerable = true;
@@ -133,7 +144,7 @@ const game = {
 
   displayScore() {
     this.ctx.fillStyle = "white";
-    this.ctx.font = "40px Helvetica";
+    this.ctx.font = "40px Silkscreen";
     this.ctx.fillText("Score: " + this.score, 60, 50);
   },
 
@@ -261,6 +272,9 @@ const game = {
       if (bool) {
         const removed = this.targets.splice(index, 1);
         if (removed.length === 1) {
+          this.audioPig.src = "../sounds/Pig.mp3";
+          this.audioPig.play();
+
           this.score += 100;
           const rand = Math.round(Math.random());
           if (rand === 1) {
@@ -294,11 +308,34 @@ const game = {
   gameOver() {
     clearInterval(this.interval);
 
+    this.audioGame.pause();
+
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.width, this.height);
 
+    // this.ctx.textAlign = "center";
+
     this.ctx.fillStyle = "white";
-    this.ctx.font = "30px Alumni Sans Pinstripe";
-    this.ctx.fillText("GAME OVER", this.width / 2, this.height / 2);
+    this.ctx.font = "80px Silkscreen";
+    this.ctx.fillText(
+      "GAME OVER",
+      this.width / 4,
+      this.height / 2 - this.height * 0.2
+    );
+
+    this.ctx.font = "50px Silkscreen";
+    // this.ctx.textAlign = "left";
+
+    this.ctx.fillText(
+      "SCORE: " + this.score,
+      this.width / 4,
+      this.height / 3 + this.height * 0.1
+    );
+
+    this.ctx.fillText(
+      "PRESS SPACE TO RESTART",
+      this.width / 4,
+      this.height / 3 + this.height * 0.2
+    );
   },
 };
