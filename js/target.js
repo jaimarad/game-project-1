@@ -1,10 +1,10 @@
 class Target {
-  constructor(ctx, width, height, speed) {
+  constructor(ctx, width, speed) {
     this.ctx = ctx;
     this.w = 100;
     this.h = 100;
-    this.x = width; // canvas width
-    this.y = Math.floor(Math.random() * 150); // initialize but changes with the typen of obstacles
+    this.x = width;
+    this.y = Math.floor(Math.random() * 150);
     this.speed = speed;
 
     this.image = new Image();
@@ -20,12 +20,13 @@ class Target {
   }
 
   draw() {
-    this.ctx.strokeRect(
-      this.hitbox.x,
-      this.hitbox.y,
-      this.hitbox.w,
-      this.hitbox.h
-    );
+    // this.ctx.strokeRect(
+    //   this.hitbox.x,
+    //   this.hitbox.y,
+    //   this.hitbox.w,
+    //   this.hitbox.h
+    // );
+
     this.ctx.drawImage(
       this.image,
       97 * this.image.frames,

@@ -5,20 +5,20 @@ const game = {
   height: undefined,
   FPS: 60,
   frameCounter: 0,
-  // FLAG
-  // canStart: true,
+
+  canStart: true,
 
   background: undefined,
   player: undefined,
-  score: 0,
+  score: undefined,
 
   obstacles: [],
   obstaclesMiddle: [],
   targets: [],
   hearts: [],
 
-  obsRate: 160,
-  pigRate: 240,
+  obsRate: undefined,
+  pigRate: undefined,
 
   interval: undefined,
 
@@ -48,6 +48,11 @@ const game = {
       this.background.speed
     );
     this.player.setListeners();
+    this.score = 0;
+    this.frameCounter = 0;
+
+    this.obsRate = 160;
+    this.pigRate = 240;
     this.obstacles = [];
     this.targets = [];
   },
@@ -56,6 +61,8 @@ const game = {
     this.audioGame.src = "../sounds/ScottTheme.mp3";
     this.audioGame.volume = 0.4;
     this.audioGame.play();
+
+    this.canStart = false;
 
     this.reset();
     this.interval = setInterval(
@@ -81,11 +88,8 @@ const game = {
         if (this.frameCounter % 60 === 0) this.score++;
 
         if (this.frameCounter % 10 === 0) {
-          if (this.player.roll) {
-            this.player.animate(4);
-          } else {
-            this.player.animate(8);
-          }
+          if (this.player.roll) this.player.animate(4);
+          else this.player.animate(8);
         }
 
         if (this.frameCounter % 2 === 0) {
@@ -105,7 +109,7 @@ const game = {
           });
         }
 
-        this.player.move(); // !!!!!!!!!!!!!!!!!!!!!
+        this.player.move();
 
         this.player.coolDownInvulnerability();
         this.player.coolDownRoll();
@@ -131,9 +135,7 @@ const game = {
         });
 
         // Hearts collisions
-        if (this.heartCollision()) {
-          if (this.player.lives < 5) this.player.lives++;
-        }
+        if (this.heartCollision() && this.player.lives < 5) this.player.lives++;
 
         if (this.player.lives === 0) this.gameOver();
       },
@@ -186,7 +188,6 @@ const game = {
     }
     if (this.frameCounter % this.obsRate === 0) {
       let rand = Math.round(Math.random());
-      // console.log(rand);
       if (rand === 1) {
         this.obstacles.push(
           new Obstacles(
@@ -195,7 +196,7 @@ const game = {
             this.height,
             this.background.speed
           )
-        ); //Aquí llamamos a la clase obstacle.js
+        );
       } else {
         const vel = Math.floor(Math.random() * 4) + 1;
         this.obstaclesMiddle.push(
@@ -205,22 +206,22 @@ const game = {
             this.height,
             this.background.speed + vel
           )
-        ); //Aquí llamamos a la clase obstacle.js
+        );
       }
     }
   },
 
   clearObstacles() {
-    this.obstacles = this.obstacles.filter((obs) => obs.x >= -obs.w); //Esta x y w son de la clase obstacle.js
+    this.obstacles = this.obstacles.filter((obs) => obs.x >= -obs.w);
     this.obstaclesMiddle = this.obstaclesMiddle.filter(
       (obs) => obs.x >= -obs.w
-    ); //Esta x y w son de la clase obstacle.js
+    );
   },
 
   generateTarget() {
     if (this.frameCounter % this.pigRate === 0) {
       this.targets.push(
-        new Target(this.ctx, this.width, this.height, this.background.speed + 3)
+        new Target(this.ctx, this.width, this.background.speed + 3)
       );
     }
   },
@@ -310,32 +311,73 @@ const game = {
 
     this.audioGame.pause();
 
+    this.clearObstacles();
+    this.clearTarget();
+    this.clearHearts();
+    this.removeBullets();
+
+    this.canStart = true;
+
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    // this.ctx.textAlign = "center";
-
+    this.ctx.textAlign = "center";
     this.ctx.fillStyle = "white";
     this.ctx.font = "80px Silkscreen";
     this.ctx.fillText(
       "GAME OVER",
-      this.width / 4,
+      this.width / 2,
       this.height / 2 - this.height * 0.2
     );
 
     this.ctx.font = "50px Silkscreen";
-    // this.ctx.textAlign = "left";
 
     this.ctx.fillText(
       "SCORE: " + this.score,
-      this.width / 4,
+      this.width / 2,
       this.height / 3 + this.height * 0.1
     );
 
-    this.ctx.fillText(
-      "PRESS SPACE TO RESTART",
-      this.width / 4,
-      this.height / 3 + this.height * 0.2
-    );
+    const body = document.querySelector("body");
+    body.style.backgroundColor = "black";
+
+    let alpha = 0;
+    const blinkInterval = setInterval(() => {
+      if (alpha === 0) alpha = 1;
+      else alpha = 0;
+      this.ctx.globalAlpha = alpha;
+
+      this.ctx.clearRect(
+        0,
+        this.height / 3 + this.height * 0.1,
+        this.width,
+        this.height
+      );
+
+      this.ctx.fillStyle = "black";
+      this.ctx.fillRect(
+        0,
+        this.height / 3 + this.height * 0.1,
+        this.width,
+        this.height
+      );
+      this.ctx.fillStyle = "white";
+
+      this.ctx.fillText(
+        "PRESS SPACE TO RESTART",
+        this.width / 2,
+        this.height / 3 + this.height * 0.2
+      );
+    }, 1000);
+
+    addEventListener("keydown", (key) => {
+      if (key.keyCode === 32) {
+        key.preventDefault();
+        if (this.canStart) {
+          clearInterval(blinkInterval);
+          this.init();
+        }
+      }
+    });
   },
 };

@@ -23,7 +23,6 @@ class Heart {
     this.x -= this.velx;
 
     if (this.y < this.height - this.h) {
-      // Está saltando!
       this.y += this.vely;
       this.vely += this.gravity;
     } else {

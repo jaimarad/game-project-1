@@ -45,7 +45,7 @@ class Player {
     this.timeSinceLastAttack = -this.bulletsCoolDown;
 
     this.image = new Image();
-    this.image.src = "../img/Player/ScottMovement.png"; //PREDETERMINADO PARA CORRER
+    this.image.src = "../img/Player/ScottMovement.png"; // running default
 
     this.imageJump = new Image();
     this.imageJump.src = "../img/Player/ScottPilgrimJump-01.png";
@@ -72,12 +72,12 @@ class Player {
   }
 
   draw() {
-    this.ctx.strokeRect(
-      this.hitbox.x,
-      this.hitbox.y,
-      this.hitbox.w,
-      this.hitbox.h
-    );
+    // this.ctx.strokeRect(
+    //   this.hitbox.x,
+    //   this.hitbox.y,
+    //   this.hitbox.w,
+    //   this.hitbox.h
+    // );
 
     if (this.invulnerable || this.roll) this.ctx.globalAlpha = 0.5;
 
@@ -181,7 +181,6 @@ class Player {
 
   move() {
     if (this.y < this.height - this.h) {
-      // Está saltando!
       this.y += this.vely;
       this.hitbox.y = this.y + 30;
       this.vely += this.gravity;
@@ -254,14 +253,15 @@ class Player {
     });
 
     addEventListener("click", (key) => {
-      if (!this.roll) {
-        if (key.timeStamp > this.timeSinceLastAttack + this.bulletsCoolDown) {
-          this.timeSinceLastAttack = key.timeStamp;
-          const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
-          bullet.calculateVelocity();
-          this.bullets.push(bullet);
-          this.audioRock.play();
-        }
+      if (
+        key.timeStamp > this.timeSinceLastAttack + this.bulletsCoolDown &&
+        !this.roll
+      ) {
+        this.timeSinceLastAttack = key.timeStamp;
+        const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
+        bullet.calculateVelocity();
+        this.bullets.push(bullet);
+        this.audioRock.play();
       }
     });
   }
