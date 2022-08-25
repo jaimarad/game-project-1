@@ -381,7 +381,7 @@ const game = {
         this.width / 2,
         this.height / 3 + this.height * 0.2
       );
-    }, 1000);
+    }, 500);
 
     addEventListener("keydown", (key) => {
       if (key.keyCode === 32) {
