@@ -24,8 +24,8 @@ const game = {
 
   interval: undefined,
 
-  audioGame: new Audio(),
-  audioPig: new Audio(),
+  // audioGame: new Audio(),
+  // audioPig: new Audio(),
 
   init() {
     this.canvas = document.getElementById("canvas");
@@ -61,22 +61,22 @@ const game = {
   },
 
   start() {
-    this.audioGame.src = "../sounds/ScottTheme.mp3";
-    this.audioGame.volume = 0.4;
+    // this.audioGame.src = "../sounds/ScottTheme.mp3";
+    // this.audioGame.volume = 0.4;
 
-    if (typeof this.audioGame.loop == "boolean") {
-      this.audioGame.loop = true;
-    } else {
-      this.audioGame.addEventListener(
-        "ended",
-        function () {
-          this.currentTime = 0;
-          this.play();
-        },
-        false
-      );
-    }
-    this.audioGame.play();
+    // if (typeof this.audioGame.loop == "boolean") {
+    //   this.audioGame.loop = true;
+    // } else {
+    //   this.audioGame.addEventListener(
+    //     "ended",
+    //     function () {
+    //       this.currentTime = 0;
+    //       this.play();
+    //     },
+    //     false
+    //   );
+    // }
+    // this.audioGame.play();
 
     this.canStart = false;
 
@@ -134,9 +134,9 @@ const game = {
 
         // Check player collisions
         if (this.playerCollision()) {
-          const audioCrash = new Audio();
-          audioCrash.src = "../sounds/Choque.mp3";
-          audioCrash.play();
+          // const audioCrash = new Audio();
+          // audioCrash.src = "../sounds/Choque.mp3";
+          // audioCrash.play();
 
           this.player.timeLastHit = performance.now();
           this.player.lives -= 1;
@@ -289,8 +289,8 @@ const game = {
       if (bool) {
         const removed = this.targets.splice(index, 1);
         if (removed.length === 1) {
-          this.audioPig.src = "../sounds/Pig.mp3";
-          this.audioPig.play();
+          // this.audioPig.src = "../sounds/Pig.mp3";
+          // this.audioPig.play();
 
           this.score += 100;
           this.deadPigs++;
@@ -326,7 +326,7 @@ const game = {
   gameOver() {
     clearInterval(this.interval);
 
-    this.audioGame.pause();
+    // this.audioGame.pause();
 
     this.obstacles = [];
     this.obstaclesMiddle = [];

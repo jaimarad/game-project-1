@@ -57,18 +57,19 @@ class Player {
     this.heartimg.src = "../img/Player/heart.png";
 
     this.rollicon = new Image();
+
     this.rollicon.src = "../img/Player/rollicon.png";
 
     this.image.frames = 0;
 
-    this.audioJump = new Audio();
-    this.audioJump.src = "../sounds/Salto.mp3";
+    // this.audioJump = new Audio();
+    // this.audioJump.src = "../sounds/Salto.mp3";
 
-    this.audioRoll = new Audio();
-    this.audioRoll.src = "../sounds/Roll.mp3";
+    // this.audioRoll = new Audio();
+    // this.audioRoll.src = "../sounds/Roll.mp3";
 
-    this.audioRock = new Audio();
-    this.audioRock.src = "../sounds/Piedra.mp3";
+    // this.audioRock = new Audio();
+    // this.audioRock.src = "../sounds/Piedra.mp3";
   }
 
   draw() {
@@ -221,7 +222,7 @@ class Player {
           if (this.y === this.height - this.h) {
             this.jump();
             this.jumping = true;
-            this.audioJump.play();
+            // this.audioJump.play();
           }
           break;
         }
@@ -230,7 +231,7 @@ class Player {
             this.lastRoll = key.timeStamp;
             if (this.y === this.height - this.h) {
               this.roll = true;
-              this.audioRoll.play();
+              // this.audioRoll.play();
             }
           }
 
@@ -261,7 +262,7 @@ class Player {
         const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
         bullet.calculateVelocity();
         this.bullets.push(bullet);
-        this.audioRock.play();
+        // this.audioRock.play();
       }
     });
   }
