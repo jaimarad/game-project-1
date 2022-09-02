@@ -12,6 +12,17 @@ const game = {
   player: undefined,
   score: undefined,
 
+  imageBg: undefined,
+  imagePlayerRun: undefined,
+  imagePlayerRoll: undefined,
+  imagePlayerJump: undefined,
+  imageHeart: undefined,
+  imageRollIcon: undefined,
+  imageBullet: undefined,
+  imageObsMid: undefined,
+  imageObs: undefined,
+  imageTarget: undefined,
+
   obstacles: [],
   obstaclesMiddle: [],
   targets: [],
@@ -31,6 +42,8 @@ const game = {
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
     this.setDimensions();
+    this.waitForImages();
+    // console.log(this.imageHeart);
     this.start();
   },
 
@@ -42,12 +55,23 @@ const game = {
   },
 
   reset() {
-    this.background = new Background(this.ctx, this.width, this.height, 3);
+    this.background = new Background(
+      this.ctx,
+      this.width,
+      this.height,
+      3,
+      this.imageBg
+    );
     this.player = new Player(
       this.ctx,
       this.height,
       this.width,
-      this.background.speed
+      this.imageBullet,
+      this.imageHeart,
+      this.imageRollIcon,
+      this.imagePlayerJump,
+      this.imagePlayerRoll,
+      this.imagePlayerRun
     );
     this.player.setListeners();
     this.score = 0;
@@ -210,7 +234,8 @@ const game = {
             this.ctx,
             this.width,
             this.height,
-            this.background.speed
+            this.background.speed,
+            this.imageObs
           )
         );
       } else {
@@ -220,7 +245,8 @@ const game = {
             this.ctx,
             this.width,
             this.height,
-            this.background.speed + vel
+            this.background.speed + vel,
+            this.imageObsMid
           )
         );
       }
@@ -237,7 +263,12 @@ const game = {
   generateTarget() {
     if (this.frameCounter % this.pigRate === 0) {
       this.targets.push(
-        new Target(this.ctx, this.width, this.background.speed + 3)
+        new Target(
+          this.ctx,
+          this.width,
+          this.background.speed + 3,
+          this.imageTarget
+        )
       );
     }
   },
@@ -402,5 +433,37 @@ const game = {
       }
       if (key.keyCode === 32) key.preventDefault();
     });
+  },
+
+  waitForImages() {
+    this.imageBg = new Image();
+    this.imageBg.src = "../img/background/FONDOACORTADO.jpg";
+
+    this.imagePlayerRun = new Image();
+    this.imagePlayerRun.src = "../img/Player/ScottMovement.png";
+
+    this.imagePlayerRoll = new Image();
+    this.imagePlayerRoll.src = "../img/Player/ScottPilgrimRoll.png";
+
+    this.imagePlayerJump = new Image();
+    this.imagePlayerJump.src = "../img/Player/ScottPilgrimJump-01.png";
+
+    this.imageRollIcon = new Image();
+    this.imageRollIcon.src = "../img/Player/rollicon.png";
+
+    this.imageHeart = new Image();
+    this.imageHeart.src = "../img/Player/heart.png";
+
+    this.imageBullet = new Image();
+    this.imageBullet.src = "../img/Player/bullet.png";
+
+    this.imageObs = new Image();
+    this.imageObs.src = "../img/obstacles/TrashCan.png";
+
+    this.imageObsMid = new Image();
+    this.imageObsMid.src = "../img/obstacles/MiddleObstacle.png";
+
+    this.imageTarget = new Image();
+    this.imageTarget.src = "../img/targets/TargetMovementLeft.png";
   },
 };

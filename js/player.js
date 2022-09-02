@@ -1,5 +1,15 @@
 class Player {
-  constructor(ctx, height, width) {
+  constructor(
+    ctx,
+    height,
+    width,
+    bulletImg,
+    heartImg,
+    rollIconImg,
+    jumpImg,
+    rollImg,
+    runImg
+  ) {
     this.ctx = ctx;
     this.height = height;
     this.width = width;
@@ -44,21 +54,17 @@ class Player {
     this.bulletsCoolDown = 1000;
     this.timeSinceLastAttack = -this.bulletsCoolDown;
 
-    this.image = new Image();
-    this.image.src = "../img/Player/ScottMovement.png"; // running default
+    this.bulletImg = bulletImg;
 
-    this.imageJump = new Image();
-    this.imageJump.src = "../img/Player/ScottPilgrimJump-01.png";
+    this.image = runImg;
 
-    this.imageRoll = new Image();
-    this.imageRoll.src = "../img/Player/ScottPilgrimRoll.png";
+    this.imageJump = jumpImg;
 
-    this.heartimg = new Image();
-    this.heartimg.src = "../img/Player/heart.png";
+    this.imageRoll = rollImg;
 
-    this.rollicon = new Image();
+    this.heartimg = heartImg;
 
-    this.rollicon.src = "../img/Player/rollicon.png";
+    this.rollicon = rollIconImg;
 
     this.image.frames = 0;
 
@@ -259,7 +265,14 @@ class Player {
         !this.roll
       ) {
         this.timeSinceLastAttack = key.timeStamp;
-        const bullet = new Bullet(this.ctx, this.x, this.y, key.x, key.y);
+        const bullet = new Bullet(
+          this.ctx,
+          this.x,
+          this.y,
+          key.x,
+          key.y,
+          this.bulletImg
+        );
         bullet.calculateVelocity();
         this.bullets.push(bullet);
         // this.audioRock.play();

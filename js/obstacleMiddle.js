@@ -1,5 +1,5 @@
 class ObstacleMiddle extends Obstacles {
-  constructor(ctx, width, height, speed) {
+  constructor(ctx, width, height, speed, img) {
     super(ctx, width, height, speed);
     this.w = 150;
     this.h = 80;
@@ -13,9 +13,8 @@ class ObstacleMiddle extends Obstacles {
       h: this.h,
     };
 
-    this.imageMiddle = new Image();
-    this.imageMiddle.src = "../img/obstacles/MiddleObstacle.png";
-    this.image.frames = 0;
+    this.imageMiddle = img;
+    this.frames = 0;
   }
 
   draw() {
@@ -28,7 +27,7 @@ class ObstacleMiddle extends Obstacles {
 
     this.ctx.drawImage(
       this.imageMiddle,
-      101.5 * this.image.frames,
+      101.5 * this.frames,
       0,
       101.5,
       70,
@@ -41,8 +40,8 @@ class ObstacleMiddle extends Obstacles {
   }
 
   animate() {
-    this.image.frames++;
-    if (this.image.frames > 3) this.image.frames = 0;
+    this.frames++;
+    if (this.frames > 3) this.frames = 0;
   }
 
   move() {

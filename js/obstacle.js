@@ -1,5 +1,5 @@
 class Obstacles {
-  constructor(ctx, width, height, speed) {
+  constructor(ctx, width, height, speed, img) {
     this.ctx = ctx;
     this.w = 100;
     this.h = 100;
@@ -15,8 +15,7 @@ class Obstacles {
 
     this.speed = speed;
 
-    this.image = new Image();
-    this.image.src = "../img/obstacles/TrashCan.png";
+    this.image = img;
   }
 
   draw() {

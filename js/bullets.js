@@ -1,5 +1,5 @@
 class Bullet {
-  constructor(ctx, playerX, playerY, mouseX, mouseY) {
+  constructor(ctx, playerX, playerY, mouseX, mouseY, img) {
     this.ctx = ctx;
     this.x = playerX + 60;
     this.y = playerY + 100;
@@ -11,8 +11,7 @@ class Bullet {
     this.mouseX = mouseX;
     this.mouseY = mouseY;
 
-    this.image = new Image();
-    this.image.src = "../img/Player/bullet.png";
+    this.image = img;
   }
 
   draw() {

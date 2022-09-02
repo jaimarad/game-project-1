@@ -1,5 +1,5 @@
 class Background {
-  constructor(ctx, width, height, speed) {
+  constructor(ctx, width, height, speed, img) {
     this.x = 0;
     this.y = 0;
     this.ctx = ctx;
@@ -9,8 +9,7 @@ class Background {
     this.speed = speed;
     this.acc = 0.001;
 
-    this.image = new Image();
-    this.image.src = "../img/background/FONDOACORTADO.jpg";
+    this.image = img;
   }
 
   draw() {

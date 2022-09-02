@@ -1,5 +1,5 @@
 class Target {
-  constructor(ctx, width, speed) {
+  constructor(ctx, width, speed, img) {
     this.ctx = ctx;
     this.w = 100;
     this.h = 100;
@@ -7,16 +7,15 @@ class Target {
     this.y = Math.floor(Math.random() * 150);
     this.speed = speed;
 
-    this.image = new Image();
-    this.image.src = "../img/targets/TargetMovementLeft.png";
-    this.image.frames = 0;
-
     this.hitbox = {
       x: this.x + 10,
       y: this.y + 30,
       w: this.w - 30,
       h: this.h - 30,
     };
+
+    this.image = img;
+    this.frames = 0;
   }
 
   draw() {
@@ -29,7 +28,7 @@ class Target {
 
     this.ctx.drawImage(
       this.image,
-      97 * this.image.frames,
+      97 * this.frames,
       0,
       99,
       96,
@@ -42,8 +41,8 @@ class Target {
   }
 
   animate() {
-    this.image.frames++;
-    if (this.image.frames > 4) this.image.frames = 0;
+    this.frames++;
+    if (this.frames > 4) this.frames = 0;
   }
 
   move() {
