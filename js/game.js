@@ -332,7 +332,8 @@ const game = {
               removed[0].x,
               removed[0].y,
               this.background.speed,
-              this.height
+              this.height,
+              this.imageHeart
             );
             this.hearts.push(heart);
           }

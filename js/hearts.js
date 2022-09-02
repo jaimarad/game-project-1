@@ -1,5 +1,5 @@
 class Heart {
-  constructor(ctx, targetX, targetY, speed, height) {
+  constructor(ctx, targetX, targetY, speed, height, img) {
     this.ctx = ctx;
     this.height = height;
     this.x = targetX;
@@ -10,8 +10,7 @@ class Heart {
     this.velx = speed;
     this.gravity = 0.65;
 
-    this.image = new Image();
-    this.image.src = "../img/targets/heart.png";
+    this.image = img
   }
 
   draw() {
