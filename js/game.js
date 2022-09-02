@@ -438,33 +438,33 @@ const game = {
 
   waitForImages() {
     this.imageBg = new Image();
-    this.imageBg.src = "../img/background/FONDOACORTADO.jpg";
+    this.imageBg.src = "img/background/FONDOACORTADO.jpg";
 
     this.imagePlayerRun = new Image();
-    this.imagePlayerRun.src = "../img/Player/ScottMovement.png";
+    this.imagePlayerRun.src = "img/Player/ScottMovement.png";
 
     this.imagePlayerRoll = new Image();
-    this.imagePlayerRoll.src = "../img/Player/ScottPilgrimRoll.png";
+    this.imagePlayerRoll.src = "img/Player/ScottPilgrimRoll.png";
 
     this.imagePlayerJump = new Image();
-    this.imagePlayerJump.src = "../img/Player/ScottPilgrimJump-01.png";
+    this.imagePlayerJump.src = "img/Player/ScottPilgrimJump-01.png";
 
     this.imageRollIcon = new Image();
-    this.imageRollIcon.src = "../img/Player/rollicon.png";
+    this.imageRollIcon.src = "img/Player/rollicon.png";
 
     this.imageHeart = new Image();
-    this.imageHeart.src = "../img/Player/heart.png";
+    this.imageHeart.src = "img/Player/heart.png";
 
     this.imageBullet = new Image();
-    this.imageBullet.src = "../img/Player/bullet.png";
+    this.imageBullet.src = "img/Player/bullet.png";
 
     this.imageObs = new Image();
-    this.imageObs.src = "../img/obstacles/TrashCan.png";
+    this.imageObs.src = "img/obstacles/TrashCan.png";
 
     this.imageObsMid = new Image();
-    this.imageObsMid.src = "../img/obstacles/MiddleObstacle.png";
+    this.imageObsMid.src = "img/obstacles/MiddleObstacle.png";
 
     this.imageTarget = new Image();
-    this.imageTarget.src = "../img/targets/TargetMovementLeft.png";
+    this.imageTarget.src = "img/targets/TargetMovementLeft.png";
   },
 };
