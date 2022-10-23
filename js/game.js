@@ -35,8 +35,8 @@ const game = {
 
   interval: undefined,
 
-  // audioGame: new Audio(),
-  // audioPig: new Audio(),
+  audioGame: new Audio(),
+  audioPig: new Audio(),
 
   init() {
     this.canvas = document.getElementById("canvas");
