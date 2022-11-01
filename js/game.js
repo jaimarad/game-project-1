@@ -85,8 +85,7 @@ const game = {
   },
 
   start() {
-    this.audioGame.src = "../sounds/ScottTheme.mp3";
-    this.audioGame.volume = 0.4;
+
 
     if (typeof this.audioGame.loop == "boolean") {
       this.audioGame.loop = true;
@@ -159,7 +158,7 @@ const game = {
         // Check player collisions
         if (this.playerCollision()) {
           const audioCrash = new Audio();
-          audioCrash.src = "../sounds/Choque.mp3";
+          audioCrash.src = "./sounds/Choque.mp3";
           audioCrash.play();
 
           this.player.timeLastHit = performance.now();
@@ -320,7 +319,7 @@ const game = {
       if (bool) {
         const removed = this.targets.splice(index, 1);
         if (removed.length === 1) {
-          this.audioPig.src = "../sounds/Pig.mp3";
+          this.audioPig.src = "./sounds/Pig.mp3";
           this.audioPig.play();
 
           this.score += 100;
@@ -466,5 +465,8 @@ const game = {
 
     this.imageTarget = new Image();
     this.imageTarget.src = "img/targets/TargetMovementLeft.png";
+
+    this.audioGame.src = "./sounds/ScottTheme.mp3";
+    this.audioGame.volume = 0.4;
   },
 };

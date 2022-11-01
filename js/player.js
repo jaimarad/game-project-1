@@ -69,13 +69,13 @@ class Player {
     this.image.frames = 0;
 
     this.audioJump = new Audio();
-    this.audioJump.src = "../sounds/Salto.mp3";
+    this.audioJump.src = "./sounds/Salto.mp3";
 
     this.audioRoll = new Audio();
-    this.audioRoll.src = "../sounds/Roll.mp3";
+    this.audioRoll.src = "./sounds/Roll.mp3";
 
     this.audioRock = new Audio();
-    this.audioRock.src = "../sounds/Piedra.mp3";
+    this.audioRock.src = "./sounds/Piedra.mp3";
   }
 
   draw() {
